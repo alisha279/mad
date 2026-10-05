@@ -43,8 +43,7 @@ class MenuItem {
       this.price = priceFloor;
     }
 
-    // Why could price not be declared final in this version of the
-    // class?
+    /
 
     // price cannot be final because the constructor may change its
     // value to priceFloor.
@@ -59,6 +58,9 @@ class MenuItem {
   // The floor logic did not run because the free() named constructor
   // directly sets price to 0 and does not use the main constructor's
   // floor-check logic.
+
+  @override
+  String toString() => '$name (Rs $price)';
 }
 
 class OrderLog {
@@ -100,7 +102,7 @@ class OrderLine {
 
   String get label => '${item.name} x$qty';
 
-  // grand is a getter, so we cannot write line.grand = 5;
+  // grand is a getter, so we cannot write line.grand = 5.
   // A getter only reads or calculates a value.
   // To make it legal, we would need to add a setter for grand.
 }
@@ -110,6 +112,76 @@ OrderLine mainOrder() {
     MenuItem(menu[u], priceOf(u)),
     2 + (t + u) % 5,
   );
+}
+
+class StudentCard {
+  final String owner;
+  int _balance;
+
+  StudentCard(this.owner) : _balance = 0;
+
+  int get balance => _balance;
+
+  set balance(int v) {
+    if (v < 0) {
+      _balance = 0;
+    } else if (v > balanceCap) {
+      _balance = balanceCap;
+    } else {
+      _balance = v;
+    }
+  }
+
+  // Instead of silently clamping an invalid value, a setter could
+  // throw an error or exception.
+}
+
+List<MenuItem> buildMenu() {
+  return [
+    for (int k = 0; k <= 3; k++)
+      MenuItem.fromString(
+        '${menu[(u + 3 * k) % 10]}:${priceOf((u + 3 * k) % 10)}',
+      ),
+  ];
+}
+
+List<OrderLine> buildReceipt() {
+  List<MenuItem> items = buildMenu();
+
+  return [
+    for (int k = 0; k <= 2; k++)
+      OrderLine(
+        items[k],
+        1 + (t + k) % 4,
+      ),
+  ];
+}
+
+class Coupon {
+  static final Map<String, Coupon> _cache = {};
+
+  final String code;
+  final int percent;
+  final int minSpend;
+
+  Coupon(this.code, this.percent)
+      : minSpend = percent * 70,
+        assert(percent >= 1 && percent <= 50);
+
+  factory Coupon.fromCode(String code) {
+    return _cache.putIfAbsent(
+      code,
+      () => Coupon(code, couponPercent),
+    );
+  }
+
+  int discountOn(int amount) {
+    if (amount >= minSpend) {
+      return amount * percent ~/ 100;
+    }
+
+    return 0;
+  }
 }
 
 void main() {
@@ -204,17 +276,87 @@ void step6() {
 }
 
 void step7() {
-  print('--- Step 7 ---');
+  StudentCard card = StudentCard('S$seed');
+
+  card.balance = seed * 10 + 50;
+  print('Step 7: topped up -> ${card.balance}');
+
+  card.balance = -seed - 1;
+  print('Step 7: bad value -> ${card.balance}');
+
+  card.balance = balanceCap - u;
+  print('Step 7: reset -> ${card.balance}');
+
+  card.balance = card.balance - mainOrder().grand;
+  print('Step 7: paid order -> ${card.balance}');
 }
 
 void step8() {
-  print('--- Step 8 ---');
+  List<MenuItem> items = buildMenu();
+
+  MenuItem priciest = items.reduce(
+    (a, b) => a.price > b.price ? a : b,
+  );
+
+  int sum = items.fold(
+    0,
+    (total, item) => total + item.price,
+  );
+
+  print('Step 8: menu = $items');
+  print('Step 8: priciest = ${priciest.name}');
+  print('Step 8: sum = $sum');
 }
 
 void step9() {
-  print('--- Step 9 ---');
+  List<OrderLine> receipt = buildReceipt();
+  int sum = 0;
+
+  for (OrderLine line in receipt) {
+    print('Step 9: ${line.label} = ${line.grand}');
+    OrderLog().add('receipt: ${line.label}');
+    sum += line.grand;
+  }
+
+  print('Step 9: receipt total = $sum');
+  print('Step 9: log size = ${OrderLog().entries.length}');
 }
 
 void step10() {
-  print('--- Step 10 ---');
+  String code = 'CAFE${seed.toString().padLeft(2, '0')}';
+
+  Coupon c1 = Coupon.fromCode(code);
+  Coupon c2 = Coupon.fromCode(code);
+
+  List<OrderLine> receiptLines = buildReceipt();
+  int receipt = 0;
+
+  for (OrderLine line in receiptLines) {
+    receipt += line.grand;
+  }
+
+  int discount = c1.discountOn(receipt);
+  int payable = receipt - discount;
+
+  print('Step 10: ${c1.code} gives ${c1.percent}% off, min spend ${c1.minSpend}');
+  print('Step 10: cached? ${identical(c1, c2)}');
+  print('Step 10: receipt $receipt, discount $discount, payable $payable');
 }
+
+
+
+//Q1. The shorthand saves us from writing the field declarations and assigning
+// the constructor parameters to the fields separately. It makes the code shorter and simpler.
+
+
+//Q2. I would use a named constructor when I want different ways to create an
+// object. I would use a factory constructor when I need to control how an object is created,
+// such as returning a cached or existing object.
+
+
+//Q3. A field assigned in the constructor body is assigned after the object fields
+// are initialized. An initializer list assigns fields before the constructor
+// body runs and can also initialize final fields.
+
+//Q4. A getter is useful when a value needs to be calculated instead of stored.
+// A setter is useful when we want to validate or control a value before storing it.
