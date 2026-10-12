@@ -196,6 +196,22 @@ List<LibraryItem> buildShelf() {
   return shelf;
 }
 
+
+class Member {
+  final String name;
+  final MemberType type;
+
+  Member(this.name, this.type);
+
+  Fine feeFor(LibraryItem item, int days) {
+    int fee = item.lateFee(days);
+    fee = LibraryItem.capFee(fee);
+    fee = type.applyDiscount(fee);
+
+    return Fine(fee);
+  }
+}
+
 Book mainBook() {
   return Book(titles[u], yearOf(u), 100 + 3 * seed);
 }
@@ -385,4 +401,36 @@ void step9() {
 
 void step10() {
   print('--- Step 10 ---');
+
+  List<LibraryItem> shelf = buildShelf();
+  Member member = Member('S$seed', MemberType.values[seed % 3]);
+
+  Fine total = shelf.fold(
+    const Fine(0),
+    (sum, item) => sum + member.feeFor(item, daysLate),
+  );
+
+  int borrowableCount = 0;
+  int renewableCount = 0;
+
+  for (LibraryItem item in shelf) {
+    if (item is Borrowable) {
+      borrowableCount++;
+    }
+
+    if (item is Renewable) {
+      renewableCount++;
+    }
+  }
+
+  print(
+    'Step 10: ${shelf.length} items, '
+    '$borrowableCount borrowable, $renewableCount renewable',
+  );
+
+  print('Step 10: ${member.name} (${member.type.name}) owes $total');
+  print('Step 10: over the cap? ${total > Fine(feeCap)}');
+
+  // One loop handles each LibraryItem through its own lateFee method.
+  // No type checks are needed to calculate each item's fine.
 }
