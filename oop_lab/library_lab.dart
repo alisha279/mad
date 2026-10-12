@@ -49,7 +49,20 @@ abstract class Borrowable {
   void giveBack();
 }
 
-class Book extends LibraryItem implements Borrowable {
+mixin Renewable {
+  int renewals = 0;
+
+  bool renew(int limit) {
+    if (renewals >= limit) {
+      return false;
+    }
+
+    renewals++;
+    return true;
+  }
+}
+
+class Book extends LibraryItem with Renewable implements Borrowable {
   final int pages;
   bool _out = false;
 
@@ -87,7 +100,7 @@ class Magazine extends LibraryItem {
   int lateFee(int days) => days * (feePerDay ~/ 2);
 }
 
-class Dvd extends LibraryItem {
+class Dvd extends LibraryItem with Renewable {
   final int minutes;
 
   Dvd(super.title, super.year, this.minutes);
@@ -186,13 +199,27 @@ void step4() {
     print('Step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
   }
 
-  // Extending Borrowable would inherit its implementation, but Borrowable
-  // defines no method bodies. implements lets Book keep its LibraryItem
-  // inheritance while providing the borrowing behavior itself.
+  // implements requires Book to write the borrowing methods itself.
 }
 
 void step5() {
   print('--- Step 5 ---');
+
+  Book book = mainBook();
+  int ok = 0;
+
+  for (int attempt = 0; attempt < renewAttempts; attempt++) {
+    if (book.renew(renewLimit)) {
+      ok++;
+    }
+  }
+
+  print('Step 5: renewed $ok of $renewAttempts attempts (limit $renewLimit)');
+  print('Step 5: renew once more? ${book.renew(renewLimit)}');
+  print('Step 5: dvd can renew too? ${mainDvd().renew(1)}');
+
+  // A mixin shares renewal code only with classes that need it.
+  // Putting renew in LibraryItem would give it to Magazine as well.
 }
 
 void step6() {
