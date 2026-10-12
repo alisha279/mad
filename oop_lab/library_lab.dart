@@ -128,6 +128,20 @@ enum MemberType {
   }
 }
 
+
+extension MoneyText on int {
+  String get rs => 'Rs $this';
+}
+
+extension Initials on String {
+  String get initials => split(' ').map((w) => w[0]).join();
+}
+
+extension ShelfMath on List<LibraryItem> {
+  int totalLateFee(int days) =>
+      fold(0, (sum, i) => sum + i.lateFee(days));
+}
+
 Book mainBook() {
   return Book(titles[u], yearOf(u), 100 + 3 * seed);
 }
@@ -254,6 +268,23 @@ void step6() {
 
 void step7() {
   print('--- Step 7 ---');
+
+  MemberType type = MemberType.values[seed % 3];
+  int fee = mainBook().lateFee(daysLate);
+  int discountedFee = type.applyDiscount(fee);
+
+  List<LibraryItem> shelf = [
+    mainBook(),
+    mainMagazine(),
+    mainDvd(),
+  ];
+
+  print('Step 7: ${discountedFee.rs}');
+  print('Step 7: initials of "${titles[u]}" = ${titles[u].initials}');
+  print('Step 7: shelf fee for $daysLate days = ${shelf.totalLateFee(daysLate).rs}');
+
+  // Extensions let us use helpful methods directly on values, such as 72.rs,
+  // instead of calling a separate function like rs(72).
 }
 
 void step8() {
