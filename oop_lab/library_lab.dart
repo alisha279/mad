@@ -1,4 +1,3 @@
-
 // library_lab.dart - Campus Library System
 // Name: Alisha Nasir   Roll no: 04072313019
 
@@ -35,7 +34,6 @@ final int shelfSize = 3 + u % 4;
 abstract class LibraryItem {
   final String title;
   final int year;
-
 
   static int created = 0;
 
@@ -121,7 +119,6 @@ class Dvd extends LibraryItem with Renewable {
   int lateFee(int days) => days * feePerDay * 2;
 }
 
-
 enum MemberType {
   student(3, 50),
   faculty(10, 20),
@@ -137,7 +134,6 @@ enum MemberType {
   }
 }
 
-
 extension MoneyText on int {
   String get rs => 'Rs $this';
 }
@@ -147,10 +143,8 @@ extension Initials on String {
 }
 
 extension ShelfMath on List<LibraryItem> {
-  int totalLateFee(int days) =>
-      fold(0, (sum, i) => sum + i.lateFee(days));
+  int totalLateFee(int days) => fold(0, (sum, i) => sum + i.lateFee(days));
 }
-
 
 class Fine {
   final int amount;
@@ -177,7 +171,6 @@ class Fine {
   String toString() => 'Fine($amount)';
 }
 
-
 List<LibraryItem> buildShelf() {
   List<LibraryItem> shelf = [];
 
@@ -195,7 +188,6 @@ List<LibraryItem> buildShelf() {
 
   return shelf;
 }
-
 
 class Member {
   final String name;
@@ -271,7 +263,9 @@ void step3() {
   Dvd dvd = mainDvd();
 
   print('Step 3: Book late fee for $daysLate days = ${book.lateFee(daysLate)}');
-  print('Step 3: Magazine late fee for $daysLate days = ${magazine.lateFee(daysLate)}');
+  print(
+    'Step 3: Magazine late fee for $daysLate days = ${magazine.lateFee(daysLate)}',
+  );
   print('Step 3: Dvd late fee for $daysLate days = ${dvd.lateFee(daysLate)}');
 
   // An abstract class cannot be created directly because subclasses must
@@ -289,11 +283,7 @@ void step4() {
   book.giveBack();
   print('Step 4: after return? ${book.isAvailable}');
 
-  List<LibraryItem> items = [
-    book,
-    mainMagazine(),
-    mainDvd(),
-  ];
+  List<LibraryItem> items = [book, mainMagazine(), mainDvd()];
 
   for (LibraryItem item in items) {
     print('Step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
@@ -343,15 +333,13 @@ void step7() {
   int fee = mainBook().lateFee(daysLate);
   int discountedFee = type.applyDiscount(fee);
 
-  List<LibraryItem> shelf = [
-    mainBook(),
-    mainMagazine(),
-    mainDvd(),
-  ];
+  List<LibraryItem> shelf = [mainBook(), mainMagazine(), mainDvd()];
 
   print('Step 7: ${discountedFee.rs}');
   print('Step 7: initials of "${titles[u]}" = ${titles[u].initials}');
-  print('Step 7: shelf fee for $daysLate days = ${shelf.totalLateFee(daysLate).rs}');
+  print(
+    'Step 7: shelf fee for $daysLate days = ${shelf.totalLateFee(daysLate).rs}',
+  );
 
   // Extensions let us use helpful methods directly on values, such as 72.rs,
   // instead of calling a separate function like rs(72).
