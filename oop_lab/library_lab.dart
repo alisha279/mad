@@ -128,7 +128,6 @@ enum MemberType {
   }
 }
 
-
 extension MoneyText on int {
   String get rs => 'Rs $this';
 }
@@ -140,6 +139,32 @@ extension Initials on String {
 extension ShelfMath on List<LibraryItem> {
   int totalLateFee(int days) =>
       fold(0, (sum, i) => sum + i.lateFee(days));
+}
+
+
+class Fine {
+  final int amount;
+
+  const Fine(this.amount);
+
+  Fine operator +(Fine o) {
+    return Fine(amount + o.amount);
+  }
+
+  bool operator >(Fine o) {
+    return amount > o.amount;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Fine && other.amount == amount;
+  }
+
+  @override
+  int get hashCode => amount.hashCode;
+
+  @override
+  String toString() => 'Fine($amount)';
 }
 
 Book mainBook() {
@@ -289,6 +314,17 @@ void step7() {
 
 void step8() {
   print('--- Step 8 ---');
+
+  Fine f1 = Fine(mainBook().lateFee(daysLate));
+  Fine f2 = Fine(mainMagazine().lateFee(daysLate));
+
+  print('Step 8: $f1 + $f2 = ${f1 + f2}');
+  print('Step 8: first bigger? ${f1 > f2}');
+  print('Step 8: equal copies? ${f1 == Fine(f1.amount)}');
+  print('Step 8: set size = ${<Fine>{f1, Fine(f1.amount), f2}.length}');
+
+  // Without hashCode, equal Fine objects may have different hash values.
+  // Sets use both == and hashCode to identify duplicate values correctly.
 }
 
 void step9() {
