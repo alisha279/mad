@@ -1,4 +1,3 @@
-
 // library_lab.dart - Campus Library System
 // Name: Alisha Nasir   Roll no: 04072313019
 
@@ -32,13 +31,15 @@ final int renewLimit = 1 + t % 3;
 final int renewAttempts = 2 + u;
 final int shelfSize = 3 + u % 4;
 
-class LibraryItem {
+abstract class LibraryItem {
   final String title;
   final int year;
 
   LibraryItem(this.title, this.year);
 
   String describe() => '$title ($year)';
+
+  int lateFee(int days);
 }
 
 class Book extends LibraryItem {
@@ -48,6 +49,9 @@ class Book extends LibraryItem {
 
   @override
   String describe() => '${super.describe()}, $pages pages';
+
+  @override
+  int lateFee(int days) => days * feePerDay;
 }
 
 class Magazine extends LibraryItem {
@@ -57,6 +61,21 @@ class Magazine extends LibraryItem {
 
   @override
   String describe() => '${super.describe()}, issue $issue';
+
+  @override
+  int lateFee(int days) => days * (feePerDay ~/ 2);
+}
+
+class Dvd extends LibraryItem {
+  final int minutes;
+
+  Dvd(super.title, super.year, this.minutes);
+
+  @override
+  String describe() => '${super.describe()}, $minutes min';
+
+  @override
+  int lateFee(int days) => days * feePerDay * 2;
 }
 
 Book mainBook() {
@@ -66,6 +85,11 @@ Book mainBook() {
 Magazine mainMagazine() {
   int i = (u + 1) % 10;
   return Magazine(titles[i], yearOf(i), 1 + (t + u) % 12);
+}
+
+Dvd mainDvd() {
+  int i = (u + 2) % 10;
+  return Dvd(titles[i], yearOf(i), 90 + seed % 40);
 }
 
 void main() {
@@ -102,11 +126,22 @@ void step2() {
   print('Step 2: ${mainMagazine().describe()}');
 
   // Without @override, a misspelled descibe() would be a separate method.
-  // The inherited describe() would run instead, so the custom output would be missing.
+  // The inherited describe() would run instead.
 }
 
 void step3() {
   print('--- Step 3 ---');
+
+  Book book = mainBook();
+  Magazine magazine = mainMagazine();
+  Dvd dvd = mainDvd();
+
+  print('Step 3: Book late fee for $daysLate days = ${book.lateFee(daysLate)}');
+  print('Step 3: Magazine late fee for $daysLate days = ${magazine.lateFee(daysLate)}');
+  print('Step 3: Dvd late fee for $daysLate days = ${dvd.lateFee(daysLate)}');
+
+  // An abstract class cannot be created directly because it may contain
+  // methods without a body that subclasses must implement.
 }
 
 void step4() {
