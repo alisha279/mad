@@ -50,8 +50,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Widget tree: LabApp -> MaterialApp -> HomePage -> Scaffold.
-    // The Max Text is nested inside Row -> Column -> SingleChildScrollView -> Scaffold.
+    // GoalBanner does not need setState because it only displays supplied values.
+    // To show a new count, pass an updated count from a parent that rebuilds.
     return Scaffold(
       appBar: AppBar(
         title: Text('Study Tracker: $course'),
@@ -75,6 +75,8 @@ class HomePage extends StatelessWidget {
                 Text('Max: $maxCount', key: const Key('info-max')),
               ],
             ),
+            const SizedBox(height: 12),
+            GoalBanner(count: startCount, max: maxCount),
           ],
         ),
       ),
@@ -98,7 +100,6 @@ class StudentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Fields are final because a StatelessWidget's configuration should not change.
-    // Removing final allows reassignment, but widgets are intended to be immutable.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -111,6 +112,28 @@ class StudentCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// Step 4: Goal progress banner
+class GoalBanner extends StatelessWidget {
+  final int count;
+  final int max;
+
+  const GoalBanner({
+    super.key,
+    required this.count,
+    required this.max,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = count * 100 ~/ max;
+
+    return Text(
+      'Progress: $count of $max ($percent%)',
+      key: const Key('progress'),
     );
   }
 }
