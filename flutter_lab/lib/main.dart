@@ -50,8 +50,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // GoalBanner does not need setState because it only displays supplied values.
-    // To show a new count, pass an updated count from a parent that rebuilds.
     return Scaffold(
       appBar: AppBar(
         title: Text('Study Tracker: $course'),
@@ -76,7 +74,7 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            GoalBanner(count: startCount, max: maxCount),
+            const Tally(),
           ],
         ),
       ),
@@ -134,6 +132,45 @@ class GoalBanner extends StatelessWidget {
     return Text(
       'Progress: $count of $max ($percent%)',
       key: const Key('progress'),
+    );
+  }
+}
+
+// Step 5: Stateful tally widget
+class Tally extends StatefulWidget {
+  const Tally({super.key});
+
+  @override
+  State<Tally> createState() => _TallyState();
+}
+
+// Tally is the configuration; _TallyState stores the changing count.
+class _TallyState extends State<Tally> {
+  int _count = startCount;
+
+  void _plus() {
+    setState(() {
+      _count += stepSize;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Count: $_count', key: const Key('count')),
+        GoalBanner(count: _count, max: maxCount),
+        Row(
+          children: [
+            ElevatedButton(
+              key: const Key('plus'),
+              onPressed: _plus,
+              child: Text('+$stepSize'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
