@@ -38,31 +38,39 @@ final List<String> lifecycleLog = <String>[];
 
 void main() => runApp(const LabApp());
 
-// Keep the name LabApp and its const constructor: the checker uses them.
+// Stateless: LabApp does not store changing data.
 class LabApp extends StatelessWidget {
   const LabApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // runApp receives the root widget; MaterialApp receives HomePage as home.
-    return const MaterialApp(title: 'Study Tracker', home: HomePage());
+    return const MaterialApp(
+      title: 'Study Tracker',
+      home: HomePage(),
+    );
   }
 }
 
-// Step 1 and Step 3: Home page and widget tree
+// Stateless: HomePage arranges the screen without storing changing data.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Study Tracker: $course')),
+      appBar: AppBar(
+        title: Text('Study Tracker: $course'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StudentCard(name: studentName, roll: rollNo, course: course),
+            StudentCard(
+              name: studentName,
+              roll: rollNo,
+              course: course,
+            ),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,7 +93,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Step 2: Student information card
+// Stateless: StudentCard only displays the information passed to it.
 class StudentCard extends StatelessWidget {
   final String name;
   final String roll;
@@ -100,7 +108,6 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fields are final because a StatelessWidget's configuration should not change.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -117,12 +124,16 @@ class StudentCard extends StatelessWidget {
   }
 }
 
-// Step 4: Goal progress banner
+// Stateless: GoalBanner calculates and displays progress from supplied values.
 class GoalBanner extends StatelessWidget {
   final int count;
   final int max;
 
-  const GoalBanner({super.key, required this.count, required this.max});
+  const GoalBanner({
+    super.key,
+    required this.count,
+    required this.max,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +146,7 @@ class GoalBanner extends StatelessWidget {
   }
 }
 
-// Step 5 and Step 6: Stateful tally widget
+// Stateful: Tally needs State to remember the changing count.
 class Tally extends StatefulWidget {
   const Tally({super.key});
 
@@ -167,8 +178,7 @@ class _TallyState extends State<Tally> {
     });
   }
 
-  // Hot reload keeps the existing State, so the count stays unchanged.
-  // Hot restart creates a new widget tree and State, so the count returns to startCount.
+  // Hot reload preserves State; hot restart creates a new State and resets the count.
 
   @override
   Widget build(BuildContext context) {
@@ -177,20 +187,19 @@ class _TallyState extends State<Tally> {
       children: [
         Text('Count: $_count', key: const Key('count')),
         GoalBanner(count: _count, max: maxCount),
-        Row(
+        Wrap(
+          spacing: 8,
           children: [
             ElevatedButton(
               key: const Key('plus'),
               onPressed: _plus,
               child: Text('+$stepSize'),
             ),
-            const SizedBox(width: 8),
             ElevatedButton(
               key: const Key('minus'),
               onPressed: _minus,
               child: Text('-$stepSize'),
             ),
-            const SizedBox(width: 8),
             OutlinedButton(
               key: const Key('reset'),
               onPressed: _reset,
@@ -203,7 +212,7 @@ class _TallyState extends State<Tally> {
   }
 }
 
-// Step 8 and Step 9: Countdown and lifecycle tracking
+// Stateful: Countdown stores remaining time and build calls in State.
 class Countdown extends StatefulWidget {
   const Countdown({super.key});
 
@@ -239,15 +248,14 @@ class _CountdownState extends State<Countdown> {
     super.dispose();
   }
 
-  // Without timer cancellation, a callback after disposal can cause
-  // "setState() called after dispose()".
+  // Cancel the timer so it cannot call setState after this State is disposed.
 
   @override
   Widget build(BuildContext context) {
     _builds++;
 
-    // One setState per timer tick causes one rebuild per second, not two.
-    // lifecycleLog can be printed in dispose, or inspected in the debugger.
+    // Each timer tick calls setState once, causing one rebuild per second.
+    // lifecycleLog can be printed in dispose before super.dispose() to inspect it.
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,7 +270,7 @@ class _CountdownState extends State<Countdown> {
   }
 }
 
-// Step 7: Counter with setState
+// Stateful: BuggyCounter stores its changing click total in State.
 class BuggyCounter extends StatefulWidget {
   const BuggyCounter({super.key});
 
