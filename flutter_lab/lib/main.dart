@@ -1,4 +1,3 @@
-
 // main.dart - Study Tracker lab
 // import 'dart:async';
 
@@ -13,8 +12,16 @@ final int t = seed ~/ 10; // tens digit
 final int u = seed % 10; // units digit
 
 const List<String> courses = [
-  'Mobile Dev', 'Data Structures', 'Operating Systems', 'Databases',
-  'Networks', 'Software Eng', 'AI', 'Web Engineering', 'Graphics', 'Security',
+  'Mobile Dev',
+  'Data Structures',
+  'Operating Systems',
+  'Databases',
+  'Networks',
+  'Software Eng',
+  'AI',
+  'Web Engineering',
+  'Graphics',
+  'Security',
 ];
 
 final String course = courses[u]; // your course name
@@ -37,10 +44,7 @@ class LabApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // runApp receives the root widget; MaterialApp receives HomePage as home.
-    return const MaterialApp(
-      title: 'Study Tracker',
-      home: HomePage(),
-    );
+    return const MaterialApp(title: 'Study Tracker', home: HomePage());
   }
 }
 
@@ -51,19 +55,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Study Tracker: $course'),
-      ),
+      appBar: AppBar(title: Text('Study Tracker: $course')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StudentCard(
-              name: studentName,
-              roll: rollNo,
-              course: course,
-            ),
+            StudentCard(name: studentName, roll: rollNo, course: course),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,11 +117,7 @@ class GoalBanner extends StatelessWidget {
   final int count;
   final int max;
 
-  const GoalBanner({
-    super.key,
-    required this.count,
-    required this.max,
-  });
+  const GoalBanner({super.key, required this.count, required this.max});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +130,7 @@ class GoalBanner extends StatelessWidget {
   }
 }
 
-// Step 5: Stateful tally widget
+// Step 5 and Step 6: Stateful tally widget
 class Tally extends StatefulWidget {
   const Tally({super.key});
 
@@ -144,15 +138,32 @@ class Tally extends StatefulWidget {
   State<Tally> createState() => _TallyState();
 }
 
-// Tally is the configuration; _TallyState stores the changing count.
+// Tally is the widget configuration; _TallyState stores the changing count.
 class _TallyState extends State<Tally> {
   int _count = startCount;
 
   void _plus() {
     setState(() {
       _count += stepSize;
+      if (_count > maxCount) _count = maxCount;
     });
   }
+
+  void _minus() {
+    setState(() {
+      _count -= stepSize;
+      if (_count < 0) _count = 0;
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _count = startCount;
+    });
+  }
+
+  // Hot reload keeps the existing State, so the count stays unchanged.
+  // Hot restart creates a new widget tree and State, so the count returns to startCount.
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +178,18 @@ class _TallyState extends State<Tally> {
               key: const Key('plus'),
               onPressed: _plus,
               child: Text('+$stepSize'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              key: const Key('minus'),
+              onPressed: _minus,
+              child: Text('-$stepSize'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              key: const Key('reset'),
+              onPressed: _reset,
+              child: const Text('Reset'),
             ),
           ],
         ),
