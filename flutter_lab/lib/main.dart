@@ -1,3 +1,4 @@
+
 // main.dart - Study Tracker lab
 // import 'dart:async';
 
@@ -73,6 +74,8 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Tally(),
+            const SizedBox(height: 12),
+            const BuggyCounter(),
           ],
         ),
       ),
@@ -198,7 +201,7 @@ class _TallyState extends State<Tally> {
   }
 }
 
-// ---- Provided for Step 7. It has a bug on purpose. Do not rename anything.
+// Step 7
 class BuggyCounter extends StatefulWidget {
   const BuggyCounter({super.key});
 
@@ -218,7 +221,9 @@ class _BuggyCounterState extends State<BuggyCounter> {
         ElevatedButton(
           key: const Key('bug-button'),
           onPressed: () {
-            _clicks += bugStep;
+            setState(() {
+              _clicks += bugStep;
+            });
           },
           child: Text('+$bugStep'),
         ),
