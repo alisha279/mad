@@ -1,3 +1,4 @@
+
 // main.dart - Study Tracker lab
 import 'dart:async';
 
@@ -202,7 +203,7 @@ class _TallyState extends State<Tally> {
   }
 }
 
-// Step 8: Countdown using initState, Timer, and dispose
+// Step 8 and Step 9: Countdown and lifecycle tracking
 class Countdown extends StatefulWidget {
   const Countdown({super.key});
 
@@ -213,10 +214,12 @@ class Countdown extends StatefulWidget {
 class _CountdownState extends State<Countdown> {
   late int _left;
   late Timer _timer;
+  int _builds = 0;
 
   @override
   void initState() {
     super.initState();
+    lifecycleLog.add('initState');
 
     _left = startSeconds;
 
@@ -232,19 +235,30 @@ class _CountdownState extends State<Countdown> {
   @override
   void dispose() {
     _timer.cancel();
+    lifecycleLog.add('dispose');
     super.dispose();
   }
 
-  // Without _timer.cancel(), a timer may call setState() after disposal,
-  // causing the error: setState() called after dispose().
+  // Without timer cancellation, a callback after disposal can cause
+  // "setState() called after dispose()".
 
   @override
   Widget build(BuildContext context) {
-    if (_left > 0) {
-      return Text('Time left: $_left s', key: const Key('time-left'));
-    }
+    _builds++;
 
-    return const Text('Time is up!', key: Key('time-left'));
+    // One setState per timer tick causes one rebuild per second, not two.
+    // lifecycleLog can be printed in dispose, or inspected in the debugger.
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_left > 0)
+          Text('Time left: $_left s', key: const Key('time-left'))
+        else
+          const Text('Time is up!', key: Key('time-left')),
+        Text('Builds: $_builds', key: const Key('builds')),
+      ],
+    );
   }
 }
 
