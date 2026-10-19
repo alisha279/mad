@@ -1,9 +1,9 @@
 
  // main.dart - Study Tracker lab
-//import 'dart:async';
+// import 'dart:async';
 
 import 'package:flutter/material.dart';
- 
+
 const String studentName = 'Alisha Nasir';
 const String rollNo = '04072313019'; // e.g. '21F-0347'
 
@@ -54,8 +54,43 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Study Tracker: $course'),
       ),
-      body: const Center(
-        child: Text('Hello'),
+      body: StudentCard(
+        name: studentName,
+        roll: rollNo,
+        course: course,
+      ),
+    );
+  }
+}
+
+// Step 2: Student information card
+class StudentCard extends StatelessWidget {
+  final String name;
+  final String roll;
+  final String course;
+
+  const StudentCard({
+    super.key,
+    required this.name,
+    required this.roll,
+    required this.course,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Fields are final because a StatelessWidget's configuration should not change.
+    // Removing final allows reassignment, but Flutter widgets should remain immutable.
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: $name', key: const Key('student-name')),
+            Text('Roll no: $roll', key: const Key('student-roll')),
+            Text('Course: $course', key: const Key('student-course')),
+          ],
+        ),
       ),
     );
   }
