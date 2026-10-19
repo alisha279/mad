@@ -1,5 +1,5 @@
 
- // main.dart - Study Tracker lab
+// main.dart - Study Tracker lab
 // import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -44,20 +44,39 @@ class LabApp extends StatelessWidget {
   }
 }
 
-// Step 1: Home page
+// Step 1 and Step 3: Home page and widget tree
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Widget tree: LabApp -> MaterialApp -> HomePage -> Scaffold.
+    // The Max Text is nested inside Row -> Column -> SingleChildScrollView -> Scaffold.
     return Scaffold(
       appBar: AppBar(
         title: Text('Study Tracker: $course'),
       ),
-      body: StudentCard(
-        name: studentName,
-        roll: rollNo,
-        course: course,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StudentCard(
+              name: studentName,
+              roll: rollNo,
+              course: course,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Start: $startCount', key: const Key('info-start')),
+                Text('Step: $stepSize', key: const Key('info-step')),
+                Text('Max: $maxCount', key: const Key('info-max')),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -79,7 +98,7 @@ class StudentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Fields are final because a StatelessWidget's configuration should not change.
-    // Removing final allows reassignment, but Flutter widgets should remain immutable.
+    // Removing final allows reassignment, but widgets are intended to be immutable.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
