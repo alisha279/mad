@@ -1,95 +1,47 @@
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 const String studentName = 'Alisha Nasir';
 const String rollNo = '04072313019';
 
-// ===== Seeded settings (generated from YOUR roll number). Do not edit. =====
-final int seed = int.parse(rollNo.substring(rollNo.length - 2));
-final int t = seed ~/ 10;
-final int u = seed % 10;
+const int seed = 19;
+const int t = 1;
+const int u = 9;
+const String course = 'Security';
 
-const List<String> courses = [
-  'Mobile Dev',
-  'Data Structures',
-  'Operating Systems',
-  'Databases',
-  'Networks',
-  'Software Eng',
-  'AI',
-  'Web Engineering',
-  'Graphics',
-  'Security',
-];
+const int startSec = 10;
+const int tick = 1;
+const int ticks = 5;
+const int stopAt = 15;
 
-const List<String> names = ['Ali', 'Sara', 'Omar', 'Hina', 'Zain', 'Maya'];
+const String tileA = 'Hina';
+const String tileB = 'Maya';
+const String tileC = 'Omar';
+const int tapsToMake = 3;
 
-const List<String> mains = [
-  'start',
-  'center',
-  'end',
-  'spaceBetween',
-  'spaceAround',
-  'spaceEvenly',
-];
+const String mainName = 'spaceEvenly';
+const String crossName = 'center';
 
-const List<String> crosses = ['start', 'center', 'end'];
+const double fixedW = 160;
+const int flexA = 2;
+const int flexB = 2;
 
-const List<String> hues = ['teal', 'indigo', 'orange', 'pink', 'green'];
+const double boxMargin = 6;
+const double boxPad = 16;
+const double boxRadius = 12;
+const double boxBorder = 2;
+const String hue = 'pink';
 
-const Map<String, MaterialColor> swatches = {
-  'teal': Colors.teal,
-  'indigo': Colors.indigo,
-  'orange': Colors.orange,
-  'pink': Colors.pink,
-  'green': Colors.green,
-};
+const double dotTop = 8;
+const double dotRight = 8;
+const double dotBottom = 12;
+const double dotLeft = 12;
 
-final String course = courses[u];
-
-// Steps 1-2: the clock
-final int startSec = 5 * (1 + t % 5);
-final int tick = 1 + u % 3;
-final int ticks = 4 + u % 4;
-final int stopAt = startSec + ticks * tick;
-
-// Steps 4-5: the tiles
-final String tileA = names[u % 6];
-final String tileB = names[(u + 2) % 6];
-final String tileC = names[(u + 4) % 6];
-final int tapsToMake = 2 + t % 3;
-
-// Step 6: axes
-final String mainName = mains[u % 6];
-final String crossName = crosses[t % 3];
-
-// Step 8: Expanded and Flexible
-final double fixedW = 70.0 + 10 * u;
-final int flexA = 1 + t % 3;
-final int flexB = 1 + u % 2;
-
-// Step 9: Container
-final double boxMargin = 4.0 + 2 * (t % 5);
-final double boxPad = 8.0 + 2 * (u % 5);
-final double boxRadius = 4.0 * (1 + (t + u) % 4);
-final double boxBorder = 1.0 + t % 3;
-final String hue = hues[(t + u) % 5];
-
-// Step 10: Stack
-final double dotTop = 4.0 + 4 * (t % 4);
-final double dotRight = 4.0 + 4 * (u % 4);
-final double dotBottom = 4.0 + 4 * ((t + u) % 4);
-final double dotLeft = 4.0 + 4 * ((t + 2 * u) % 4);
-// ===========================================================================
-
-// Step 2 writes to this list from initState and dispose.
-final List<String> lifecycleLog = <String>[];
+final List<String> lifecycleLog = [];
 
 void main() => runApp(const LabApp());
 
-// Keep the name LabApp and its const constructor.
 class LabApp extends StatelessWidget {
   const LabApp({super.key});
 
@@ -127,6 +79,8 @@ class HomePage extends StatelessWidget {
             const InfoPanel(),
             const SizedBox(height: 12),
             const SummaryRow(),
+            const SizedBox(height: 12),
+            const ShareRow(),
           ],
         ),
       ),
@@ -134,44 +88,39 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ---- Provided: shows YOUR numbers. Keep it on the page.
 class SettingsCard extends StatelessWidget {
   const SettingsCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      'YOUR SETTINGS (seed $seed)\n'
-      'clock: start $startSec, tick $tick, stop at $stopAt\n'
-      'tiles: $tileA, $tileB, $tileC '
-      '(taps for the Step 5 experiment: $tapsToMake)\n'
-      'row main axis: $mainName | column cross axis: $crossName\n'
-      'flex: $flexA and $flexB | '
-      'fixed width: ${fixedW.toStringAsFixed(0)}\n'
-      'box: margin $boxMargin, padding $boxPad, radius $boxRadius, '
-      'border $boxBorder, colour $hue\n'
-      'stamp: top $dotTop, right $dotRight, '
-      'bottom $dotBottom, left $dotLeft',
+    return Card(
       key: const Key('settings'),
-      style: const TextStyle(
-        fontFamily: 'monospace',
-        fontSize: 12,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Text(
+          'Seed: $seed | Course: $course\n'
+          'Start: $startSec | Tick: $tick | Ticks: $ticks | Stop: $stopAt\n'
+          'Tiles: $tileA, $tileB, $tileC | Taps: $tapsToMake\n'
+          'Main: $mainName | Cross: $crossName\n'
+          'Fixed width: $fixedW | Flex: $flexA:$flexB\n'
+          'Margin: $boxMargin | Padding: $boxPad | Radius: $boxRadius\n'
+          'Border: $boxBorder | Hue: $hue\n'
+          'Dots: $dotTop, $dotRight, $dotBottom, $dotLeft',
+          style: const TextStyle(fontFamily: 'monospace'),
+        ),
       ),
     );
   }
 }
 
-// Step 7: Row with three paragraphs
 class SummaryRow extends StatelessWidget {
   const SummaryRow({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Constraints go down, sizes go up.
-    // Expanded gives each Text a limited share of the Row's width.
-    // The Text can then wrap its words inside those width constraints,
-    // preventing the Row from overflowing horizontally.
-
+    // Expanded gives each Text part of the available Row width.
+    // This allows the text to wrap instead of overflowing.
     return Row(
       children: [
         Expanded(
@@ -197,7 +146,6 @@ class SummaryRow extends StatelessWidget {
   }
 }
 
-// Steps 1-2: Clock
 class Clock extends StatefulWidget {
   const Clock({super.key});
 
@@ -206,7 +154,7 @@ class Clock extends StatefulWidget {
 }
 
 class _ClockState extends State<Clock> {
-  late Timer _timer;
+  Timer? _timer;
   int _seconds = startSec;
   int _builds = 0;
 
@@ -215,19 +163,28 @@ class _ClockState extends State<Clock> {
     super.initState();
     lifecycleLog.add('initState');
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() => _seconds += tick);
+    _timer = Timer.periodic(
+      Duration(seconds: tick),
+      (timer) {
+        if (_seconds >= stopAt) {
+          timer.cancel();
+        } else {
+          setState(() {
+            _seconds += tick;
+          });
 
-      if (_seconds >= stopAt) {
-        timer.cancel();
-      }
-    });
+          if (_seconds >= stopAt) {
+            timer.cancel();
+          }
+        }
+      },
+    );
   }
 
   @override
   void dispose() {
-    _timer.cancel();
     lifecycleLog.add('dispose');
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -235,30 +192,28 @@ class _ClockState extends State<Clock> {
   Widget build(BuildContext context) {
     _builds++;
 
-    // One timer tick calls setState once, causing one rebuild.
-    // Widget configurations are cheap and recreated; Elements persist
-    // and maintain the connection to State. RenderObjects handle layout,
-    // painting, and hit testing. Without cancelling the timer in dispose,
-    // setState could be called after disposal.
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Clock: $_seconds',
-          key: const Key('clock'),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Clock: $_seconds s',
+              key: const Key('clock-seconds'),
+            ),
+            Text(
+              'Builds: $_builds',
+              key: const Key('clock-builds'),
+            ),
+            Probe(seconds: _seconds),
+          ],
         ),
-        Text(
-          'Builds: $_builds',
-          key: const Key('builds'),
-        ),
-        Probe(seconds: _seconds),
-      ],
+      ),
     );
   }
 }
 
-// Step 3: BuildContext, Widget and Element
 class Probe extends StatelessWidget {
   final int seconds;
 
@@ -266,35 +221,32 @@ class Probe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool above =
-        context.findAncestorWidgetOfExactType<Scaffold>() != null;
+    final scaffoldFound = context.findAncestorWidgetOfExactType<Scaffold>();
 
-    // "this" is the Widget configuration; context identifies its Element.
-    // context.widget gives the current widget configuration.
-    // The RenderObject is lower in the rendering tree and handles layout,
-    // painting and hit testing.
-
+    // Widget: configuration describing what should appear.
+    // Element: connects the widget to its place in the tree.
+    // RenderObject: handles layout and painting.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Seen at: $seconds s',
+          'Probe sees: $seconds',
           key: const Key('probe-seen'),
         ),
-        Text(
-          'Widget #${identityHashCode(this)}',
-          key: const Key('probe-widget'),
+        const Text(
+          'Widget: Probe',
+          key: Key('probe-widget'),
+        ),
+        const Text(
+          'Element: mounted in the widget tree',
+          key: Key('probe-element'),
+        ),
+        const Text(
+          'Context: gives access to this location in the tree',
+          key: Key('probe-context'),
         ),
         Text(
-          'Element #${identityHashCode(context)}',
-          key: const Key('probe-element'),
-        ),
-        Text(
-          'Context belongs to: ${context.widget.runtimeType}',
-          key: const Key('probe-context'),
-        ),
-        Text(
-          'Scaffold above me: $above',
+          'Scaffold ancestor found: ${scaffoldFound != null}',
           key: const Key('probe-above'),
         ),
       ],
@@ -302,7 +254,6 @@ class Probe extends StatelessWidget {
   }
 }
 
-// Step 4.1: Welcome widget
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
 
@@ -317,7 +268,6 @@ class Welcome extends StatelessWidget {
   }
 }
 
-// Step 4.2: Tile widget with its own tap counter
 class Tile extends StatefulWidget {
   final String label;
 
@@ -332,21 +282,18 @@ class _TileState extends State<Tile> {
 
   @override
   Widget build(BuildContext context) {
-    // This style is called composition.
-    // We combine ElevatedButton with Text instead of extending
-    // ElevatedButton. Composition makes widgets easier to reuse
-    // and customize.
-
+    // Composition means building a widget using other widgets.
     return ElevatedButton(
       onPressed: () {
-        setState(() => taps++);
+        setState(() {
+          taps++;
+        });
       },
       child: Text('${widget.label}: $taps'),
     );
   }
 }
 
-// Step 5: SwapBoard keeps the tiles and swaps their order.
 class SwapBoard extends StatefulWidget {
   const SwapBoard({super.key});
 
@@ -361,16 +308,16 @@ class _SwapBoardState extends State<SwapBoard> {
     Tile(tileC, key: ValueKey(tileC)),
   ];
 
-  void swap() => setState(() => tiles = tiles.reversed.toList());
+  void swap() {
+    setState(() {
+      tiles = tiles.reversed.toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Without keys, Flutter matches widgets by type and position.
-    // The Element at the left position can keep its State and counter
-    // even when a different widget label moves into that position.
-    // ValueKeys let Flutter match each widget to its correct Element,
-    // so its State and tap count move with its label.
-
+    // Keys help Flutter match each tile with its existing State.
+    // Without keys, State can remain attached to a position when reordered.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -385,15 +332,13 @@ class _SwapBoardState extends State<SwapBoard> {
   }
 }
 
-// Step 6: Row and Column axes
 class InfoPanel extends StatelessWidget {
   const InfoPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // A Column's main axis is vertical.
-    // Its cross axis is horizontal, so center moves children left or right.
-
+    // A Column's main axis is vertical and its cross axis is horizontal.
+    // A Row's main axis is horizontal and its cross axis is vertical.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -401,9 +346,18 @@ class InfoPanel extends StatelessWidget {
           key: const Key('info-row'),
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('Start: $startSec s', key: const Key('row-a')),
-            Text('Tick: $tick s', key: const Key('row-b')),
-            Text('Stop: $stopAt s', key: const Key('row-c')),
+            Text(
+              'Start: $startSec s',
+              key: const Key('row-a'),
+            ),
+            Text(
+              'Tick: $tick s',
+              key: const Key('row-b'),
+            ),
+            Text(
+              'Stop: $stopAt s',
+              key: const Key('row-c'),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -411,10 +365,63 @@ class InfoPanel extends StatelessWidget {
           key: const Key('info-col'),
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Name: $studentName', key: const Key('col-a')),
-            Text('Roll no: $rollNo', key: const Key('col-b')),
-            Text('Course: $course', key: const Key('col-c')),
+            Text(
+              'Name: $studentName',
+              key: const Key('col-a'),
+            ),
+            Text(
+              'Roll no: $rollNo',
+              key: const Key('col-b'),
+            ),
+            Text(
+              'Course: $course',
+              key: const Key('col-c'),
+            ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+class ShareRow extends StatelessWidget {
+  const ShareRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // The fixed child takes its requested width first.
+    // The remaining width is divided according to flexA:flexB.
+    // Expanded fills its share; Flexible can remain at its natural size.
+    //
+    // If Expanded and Flexible are swapped, the first button (Exp) can
+    // stay at its natural size while the second button (Flex) must fill
+    // its share. Expanded is Flexible with fit: FlexFit.tight.
+    return Row(
+      key: const Key('share-row'),
+      children: [
+        SizedBox(
+          key: const Key('fixed'),
+          width: fixedW,
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text('F'),
+          ),
+        ),
+        Expanded(
+          flex: flexA,
+          child: ElevatedButton(
+            key: const Key('exp'),
+            onPressed: () {},
+            child: const Text('Exp'),
+          ),
+        ),
+        Flexible(
+          flex: flexB,
+          child: ElevatedButton(
+            key: const Key('flex'),
+            onPressed: () {},
+            child: const Text('Flex'),
+          ),
         ),
       ],
     );
