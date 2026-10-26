@@ -1,4 +1,4 @@
-// main.dart - Team Board lab
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -216,10 +216,11 @@ class _ClockState extends State<Clock> {
   Widget build(BuildContext context) {
     _builds++;
 
-    // Builds increases once per second because each timer tick calls
-    // setState once, which triggers one rebuild of this State object.
-    // Without _timer.cancel() in dispose(), a timer tick after removal
-    // could cause the error: setState() called after dispose().
+    // One timer tick calls setState once, causing one rebuild.
+    // Widget configurations are cheap and recreated; Elements persist
+    // and maintain the connection to State. RenderObjects handle layout,
+    // painting, and hit testing. Without cancelling the timer in dispose,
+    // setState could be called after disposal.
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,6 +232,51 @@ class _ClockState extends State<Clock> {
         Text(
           'Builds: $_builds',
           key: const Key('builds'),
+        ),
+        Probe(seconds: _seconds),
+      ],
+    );
+  }
+}
+
+// Step 3: BuildContext, Widget and Element
+class Probe extends StatelessWidget {
+  final int seconds;
+
+  const Probe({super.key, required this.seconds});
+
+  @override
+  Widget build(BuildContext context) {
+    final bool above =
+        context.findAncestorWidgetOfExactType<Scaffold>() != null;
+
+    // "this" is the Widget configuration; context identifies its Element.
+    // context.widget gives the current widget configuration.
+    // The RenderObject is lower in the rendering tree and handles layout,
+    // painting and hit testing.
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Seen at: $seconds s',
+          key: const Key('probe-seen'),
+        ),
+        Text(
+          'Widget #${identityHashCode(this)}',
+          key: const Key('probe-widget'),
+        ),
+        Text(
+          'Element #${identityHashCode(context)}',
+          key: const Key('probe-element'),
+        ),
+        Text(
+          'Context belongs to: ${context.widget.runtimeType}',
+          key: const Key('probe-context'),
+        ),
+        Text(
+          'Scaffold above me: $above',
+          key: const Key('probe-above'),
         ),
       ],
     );
