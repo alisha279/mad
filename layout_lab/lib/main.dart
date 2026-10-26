@@ -38,6 +38,14 @@ const double dotRight = 8;
 const double dotBottom = 12;
 const double dotLeft = 12;
 
+const Map<String, MaterialColor> swatches = {
+  'pink': Colors.pink,
+  'blue': Colors.blue,
+  'green': Colors.green,
+  'orange': Colors.orange,
+  'purple': Colors.purple,
+};
+
 final List<String> lifecycleLog = [];
 
 void main() => runApp(const LabApp());
@@ -81,6 +89,8 @@ class HomePage extends StatelessWidget {
             const SummaryRow(),
             const SizedBox(height: 12),
             const ShareRow(),
+            const SizedBox(height: 12),
+            const InfoBox(),
           ],
         ),
       ),
@@ -221,7 +231,8 @@ class Probe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scaffoldFound = context.findAncestorWidgetOfExactType<Scaffold>();
+    final scaffoldFound =
+        context.findAncestorWidgetOfExactType<Scaffold>();
 
     // Widget: configuration describing what should appear.
     // Element: connects the widget to its place in the tree.
@@ -424,6 +435,32 @@ class ShareRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class InfoBox extends StatelessWidget {
+  const InfoBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Padding is inside the border; margin is outside the border.
+    // Use Padding for simple inner space or SizedBox for fixed dimensions
+    // or gaps. Use Container when several layout and decoration settings
+    // are needed together.
+    return Container(
+      key: const Key('info-box'),
+      margin: EdgeInsets.all(boxMargin),
+      padding: EdgeInsets.all(boxPad),
+      decoration: BoxDecoration(
+        color: swatches[hue]!.shade100,
+        borderRadius: BorderRadius.circular(boxRadius),
+        border: Border.all(width: boxBorder),
+      ),
+      child: Text(
+        'Course: $course',
+        key: const Key('box-text'),
+      ),
     );
   }
 }
