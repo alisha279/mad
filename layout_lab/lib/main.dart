@@ -118,8 +118,6 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
-
-            // Step 1: Clock
             const Clock(),
           ],
         ),
@@ -180,7 +178,7 @@ class SummaryRow extends StatelessWidget {
   }
 }
 
-// Step 1: Clock
+// Steps 1-2: Clock
 class Clock extends StatefulWidget {
   const Clock({super.key});
 
@@ -191,10 +189,12 @@ class Clock extends StatefulWidget {
 class _ClockState extends State<Clock> {
   late Timer _timer;
   int _seconds = startSec;
+  int _builds = 0;
 
   @override
   void initState() {
     super.initState();
+    lifecycleLog.add('initState');
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _seconds += tick);
@@ -206,10 +206,33 @@ class _ClockState extends State<Clock> {
   }
 
   @override
+  void dispose() {
+    _timer.cancel();
+    lifecycleLog.add('dispose');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Text(
-      'Clock: $_seconds',
-      key: const Key('clock'),
+    _builds++;
+
+    // Builds increases once per second because each timer tick calls
+    // setState once, which triggers one rebuild of this State object.
+    // Without _timer.cancel() in dispose(), a timer tick after removal
+    // could cause the error: setState() called after dispose().
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Clock: $_seconds',
+          key: const Key('clock'),
+        ),
+        Text(
+          'Builds: $_builds',
+          key: const Key('builds'),
+        ),
+      ],
     );
   }
 }
