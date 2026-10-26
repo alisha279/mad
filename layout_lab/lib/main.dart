@@ -118,7 +118,17 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
+            const Welcome(),
+            const SizedBox(height: 12),
             const Clock(),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Tile(tileA),
+                Tile(tileB),
+                Tile(tileC),
+              ],
+            ),
           ],
         ),
       ),
@@ -279,6 +289,50 @@ class Probe extends StatelessWidget {
           key: const Key('probe-above'),
         ),
       ],
+    );
+  }
+}
+
+// Step 4.1: Welcome widget
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Welcome, $studentName',
+        key: const Key('welcome'),
+      ),
+    );
+  }
+}
+
+// Step 4.2: Tile widget with its own tap counter
+class Tile extends StatefulWidget {
+  final String label;
+
+  const Tile(this.label, {super.key});
+
+  @override
+  State<Tile> createState() => _TileState();
+}
+
+class _TileState extends State<Tile> {
+  int taps = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    // This style is called composition.
+    // We combine ElevatedButton with Text instead of extending
+    // ElevatedButton. Composition makes widgets easier to reuse
+    // and customize.
+
+    return ElevatedButton(
+      onPressed: () {
+        setState(() => taps++);
+      },
+      child: Text('${widget.label}: $taps'),
     );
   }
 }
